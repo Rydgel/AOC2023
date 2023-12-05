@@ -50,13 +50,8 @@ fn parse_input(input: &str) -> Vec<Game> {
 fn part1(input: &[Game]) -> usize {
     input
         .iter()
-        .filter_map(|g| {
-            if is_play_possible(&g.plays) {
-                Some(g.game_number)
-            } else {
-                None
-            }
-        })
+        .filter(|g| is_play_possible(&g.plays))
+        .map(|g| g.game_number)
         .sum()
 }
 
