@@ -1,4 +1,5 @@
 use regex::Regex;
+use std::collections::HashMap;
 
 const INPUT: &str = include_str!("../input.txt");
 
@@ -41,10 +42,18 @@ impl From<&str> for Play {
     }
 }
 
-const POSSIBLES: (usize, usize, usize) = (12, 13, 14);
-
 fn parse_input(input: &str) -> Vec<Game> {
     input.split('\n').map(|s| s.into()).collect()
+}
+
+fn is_play_possible(plays: &[Play]) -> bool {
+    let possibles = HashMap::from([("red", 12), ("green", 13), ("blue", 14)]);
+
+    !plays.iter().any(|play| {
+        play.red > possibles["red"]
+            || play.green > possibles["green"]
+            || play.blue > possibles["blue"]
+    })
 }
 
 fn part1(input: &[Game]) -> usize {
@@ -55,18 +64,16 @@ fn part1(input: &[Game]) -> usize {
         .sum()
 }
 
-fn is_play_possible(plays: &[Play]) -> bool {
-    for play in plays {
-        if play.red > POSSIBLES.0 || play.green > POSSIBLES.1 || play.blue > POSSIBLES.2 {
-            return false;
-        }
-    }
+fn get_cubic_power(game: &Game) -> usize {
+    let red: usize = game.plays.iter().map(|p| p.red).max().unwrap_or(0);
+    let green: usize = game.plays.iter().map(|p| p.green).max().unwrap_or(0);
+    let blue: usize = game.plays.iter().map(|p| p.blue).max().unwrap_or(0);
 
-    true
+    red * green * blue
 }
 
 fn part2(input: &[Game]) -> usize {
-    0
+    input.iter().map(get_cubic_power).sum()
 }
 
 fn main() {
